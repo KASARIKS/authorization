@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/kasariks/authorization/internal/db"
 	"github.com/kasariks/authorization/internal/handlers"
 )
 
@@ -17,6 +18,7 @@ func CreateServer(logger *log.Logger) (*routerData, error) {
 	// Create db here
 
 	registerHandlers()
+	db.NewDB()
 
 	router := newRouterData(logger)
 	return router, nil
@@ -24,6 +26,7 @@ func CreateServer(logger *log.Logger) (*routerData, error) {
 
 func registerHandlers() {
 	http.HandleFunc("/", handlers.MainHandler)
+	http.HandleFunc("/registration", handlers.Registration)
 }
 
 func newRouterData(logger *log.Logger) *routerData {
