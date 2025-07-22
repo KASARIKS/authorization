@@ -15,10 +15,13 @@ type routerData struct {
 }
 
 func CreateServer(logger *log.Logger) (*routerData, error) {
-	// Create db here
+	database, err := db.NewDB()
+	if err != nil {
+		return nil, err
+	}
+	handlers.InitHandlers(database)
 
 	registerHandlers()
-	db.NewDB()
 
 	router := newRouterData(logger)
 	return router, nil

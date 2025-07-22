@@ -1,9 +1,20 @@
 package handlers
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"io"
 	"net/http"
+
+	"github.com/kasariks/authorization/internal/db"
+	"github.com/kasariks/authorization/internal/dbUser"
 )
+
+var handlersDb *db.DB
+
+func InitHandlers(db *db.DB) {
+	handlersDb = db
+}
 
 // Display sign up page
 func MainHandler(w http.ResponseWriter, r *http.Request) {
@@ -11,5 +22,34 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Registration(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "There's no registration yet, sorry.")
+	if r.Header.Get("Content-Type") == "application/json" {
+		io.WriteString(w, "There's no registration for json yet, sorry.")
+		return
+	}
+
+	err := addFromForm(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}
+
+func addFromForm(r *http.Request) error {
+	encryptedPassword := sha256.Sum256([]byte(r.PostFormValue("Password")))
+
+	newUser := &dbUser.DbUser{
+		Nickname: r.PostFormValue("Nickname"),
+		Password: hex.EncodeToString(encryptedPassword[:]), // Password isn't encrypted
+	}
+
+	err := handlersDb.AddUser(*newUser)
+
+	return err
+}
+
+func GetUserByNickname(w http.ResponseWriter, r *http.Request) {
+	nickname := r.Header.Get("nickname")
+	gottenUser, err := handlersDb.GetUserByNickname(nickname)
+	if err != nil {
+
+	}
 }
