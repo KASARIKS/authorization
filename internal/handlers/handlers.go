@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"io"
 	"net/http"
 
@@ -47,9 +48,16 @@ func addFromForm(r *http.Request) error {
 }
 
 func GetUserByNickname(w http.ResponseWriter, r *http.Request) {
-	nickname := r.Header.Get("nickname")
+	if r.Method != http.MethodGet {
+		http.Error(w, errors.New("not supported method").Error(), http.StatusBadRequest)
+	}
+
+	nickname := r.URL.Query().Get("Nickname")
 	gottenUser, err := handlersDb.GetUserByNickname(nickname)
 	if err != nil {
-
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
+	io.WriteString(w, gottenUser.Nickname+" "+gottenUser.Password)
 }
