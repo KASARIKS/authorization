@@ -52,7 +52,7 @@ func GetUserByNickname(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errors.New("not supported method").Error(), http.StatusBadRequest)
 	}
 
-	nickname := r.URL.Query().Get("Nickname")
+	nickname := r.URL.Query().Get("nickname")
 	gottenUser, err := handlersDb.GetUserByNickname(nickname)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
