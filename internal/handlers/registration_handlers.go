@@ -26,7 +26,7 @@ func addFromForm(r *http.Request) error {
 
 	newUser := &dbuser.DbUser{
 		Nickname: r.PostFormValue("Nickname"),
-		Password: hex.EncodeToString(encryptedPassword[:]), // Password isn't encrypted
+		Password: hex.EncodeToString(encryptedPassword[:]),
 	}
 
 	err := handlersDb.AddUser(*newUser)
