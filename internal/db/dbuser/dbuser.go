@@ -1,4 +1,4 @@
-package dbUser
+package dbuser
 
 type DbUser struct {
 	Nickname string `json:"Nickname"`

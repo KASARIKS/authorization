@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 
-	"github.com/kasariks/authorization/internal/dbUser"
 	_ "modernc.org/sqlite"
 )
 
@@ -45,21 +44,4 @@ func NewDB() (*DB, error) {
 	}
 
 	return internalDatabase, nil
-}
-
-func (db *DB) AddUser(dbUser dbUser.DbUser) error {
-	_, err := db.db.Exec("INSERT INTO Users (Nickname, Password) VALUES (:Nickname, :Password);",
-		sql.Named("Nickname", dbUser.Nickname),
-		sql.Named("Password", dbUser.Password))
-
-	return err
-}
-
-func (db *DB) GetUserByNickname(Nickname string) (*dbUser.DbUser, error) {
-	row := db.db.QueryRow("SELECT Nickname, Password FROM Users WHERE Nickname=:Nickname;",
-		sql.Named("Nickname", Nickname))
-	gottenUser := &dbUser.DbUser{}
-	err := row.Scan(&gottenUser.Nickname, &gottenUser.Password)
-
-	return gottenUser, err
 }
