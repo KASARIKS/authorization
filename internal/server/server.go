@@ -31,6 +31,8 @@ func registerHandlers() {
 	http.HandleFunc("/", handlers.MainHandler)
 	http.HandleFunc("/registration", handlers.Registration)
 	http.HandleFunc("/user", handlers.GetUserByNickname)
+	http.HandleFunc("/addimagepage", handlers.LoadAddSecretImagePage)
+	http.HandleFunc("/addimage", handlers.AddSecretImage)
 }
 
 func newRouterData(logger *log.Logger) *routerData {

@@ -20,7 +20,7 @@ func NewDB() (*DB, error) {
 		db: db,
 	}
 
-	_, tableCheck := db.Query("SELECT Nickname FROM Users LIMIT 1;")
+	rows, tableCheck := db.Query("SELECT Nickname FROM Users LIMIT 1;")
 	if tableCheck != nil {
 		_, err = internalDatabase.db.Exec("CREATE TABLE Users (" +
 			"Nickname TEXT NOT NULL PRIMARY KEY, " +
@@ -30,8 +30,9 @@ func NewDB() (*DB, error) {
 			return nil, err
 		}
 	}
+	defer rows.Close()
 
-	_, tableCheck = db.Query("SELECT Nickname FROM SecretImages LIMIT 1;")
+	rows, tableCheck = db.Query("SELECT Nickname FROM SecretImages LIMIT 1;")
 	if tableCheck != nil {
 		_, err = internalDatabase.db.Exec("CREATE TABLE SecretImages (" +
 			"Nickname TEXT NOT NULL, " +
@@ -42,6 +43,7 @@ func NewDB() (*DB, error) {
 			return nil, err
 		}
 	}
+	defer rows.Close()
 
 	return internalDatabase, nil
 }

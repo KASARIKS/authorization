@@ -9,6 +9,7 @@ import (
 func GetUserByNickname(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, errors.New("not supported method").Error(), http.StatusBadRequest)
+		return
 	}
 
 	nickname := r.URL.Query().Get("nickname")
