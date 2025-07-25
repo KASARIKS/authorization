@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"net/http"
+
+	"github.com/kasariks/authorization/internal/db/dbuser"
 )
 
 func LoadAddSecretImagePage(w http.ResponseWriter, r *http.Request) {
@@ -17,12 +19,7 @@ func AddSecretImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nickname := r.FormValue("Nickname")
-	gottenUser, err := handlersDb.GetUserByNickname(nickname)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	gottenUser := dbuser.NewDbUser(r.FormValue("Nickname"), r.FormValue("Password"))
 
 	imgBuf, err := getImageFromForm(r)
 	if err != nil {
@@ -30,7 +27,7 @@ func AddSecretImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = handlersDb.AddImageByNickname(gottenUser.Nickname, imgBuf.Bytes())
+	err = handlersDb.AddImageByNickname(gottenUser, imgBuf.Bytes())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

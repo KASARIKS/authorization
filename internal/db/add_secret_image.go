@@ -2,17 +2,23 @@ package db
 
 import (
 	"database/sql"
+	"errors"
+
+	"github.com/kasariks/authorization/internal/db/dbuser"
 )
 
-// Maybe should be checked input password
-func (db *DB) AddImageByNickname(Nickname string, Image []byte) error {
-	user, err := db.GetUserByNickname(Nickname)
+func (db *DB) AddImageByNickname(user *dbuser.DbUser, Image []byte) error {
+	realUser, err := db.GetUserByNickname(user.Nickname)
 	if err != nil {
 		return err
 	}
 
+	if realUser.Password != user.Password {
+		return errors.New("wrong password")
+	}
+
 	_, err = db.db.Exec("INSERT INTO SecretImages (Nickname, Image) VALUES (:Nickname, :Image);",
-		sql.Named("Nickname", user.Nickname),
+		sql.Named("Nickname", realUser.Nickname),
 		sql.Named("Image", Image))
 
 	return err

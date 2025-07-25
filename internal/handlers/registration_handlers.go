@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"io"
 	"net/http"
 
@@ -22,13 +20,7 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 }
 
 func addFromForm(r *http.Request) error {
-	encryptedPassword := sha256.Sum256([]byte(r.PostFormValue("Password")))
-
-	newUser := &dbuser.DbUser{
-		Nickname: r.PostFormValue("Nickname"),
-		Password: hex.EncodeToString(encryptedPassword[:]),
-	}
-
+	newUser := dbuser.NewDbUser(r.PostFormValue("Nickname"), r.PostFormValue("Password"))
 	err := handlersDb.AddUser(*newUser)
 
 	return err
