@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/kasariks/authorization/internal/db/dbuser"
 )
@@ -13,4 +14,18 @@ func (db *DB) GetUserByNickname(Nickname string) (*dbuser.DbUser, error) {
 	err := row.Scan(&gottenUser.Nickname, &gottenUser.Password)
 
 	return gottenUser, err
+}
+
+// return nil if everything okay
+func (db *DB) CheckUserPassword(inputUser *dbuser.DbUser) error {
+	realUser, err := db.GetUserByNickname(inputUser.Nickname)
+	if err != nil {
+		return err
+	}
+
+	if realUser.Password != inputUser.Password {
+		return errors.New("wrong password")
+	}
+
+	return nil
 }

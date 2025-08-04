@@ -29,10 +29,13 @@ func CreateServer(logger *log.Logger) (*routerData, error) {
 
 func registerHandlers() {
 	http.HandleFunc("/", handlers.MainHandler)
+	http.HandleFunc("/registrationpage", handlers.RegistrationPage)
 	http.HandleFunc("/registration", handlers.Registration)
 	http.HandleFunc("/user", handlers.GetUserByNickname)
 	http.HandleFunc("/addimagepage", handlers.LoadAddSecretImagePage)
 	http.HandleFunc("/addimage", handlers.AddSecretImage)
+	http.HandleFunc("/authorizationpage", handlers.AuthorizationPage)
+	http.HandleFunc("/authorization", handlers.Authorization)
 }
 
 func newRouterData(logger *log.Logger) *routerData {

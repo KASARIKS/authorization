@@ -10,7 +10,7 @@ type DbUser struct {
 	Password string `json:"Password"`
 }
 
-func NewDbUser(Nickname string, Password string) *DbUser {
+func NewDbUser(Nickname, Password string) *DbUser {
 	encryptedPassword := sha256.Sum256([]byte(Password))
 	newUser := &DbUser{
 		Nickname: Nickname,
