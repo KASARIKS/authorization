@@ -8,9 +8,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kasariks/authorization/internal/db/dbuser"
+	"github.com/kasariks/authorization/internal/jwtinfo"
 )
 
-const jwtKey = "oepuqtpowejfvgc;lvmjn290331pq;woerwqje[p]"
 const jwtExistingTimeMinutes = 2
 
 func AuthorizationPage(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func Authorization(w http.ResponseWriter, r *http.Request) {
 	}
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := jwtToken.SignedString([]byte(jwtKey))
+	signedToken, err := jwtToken.SignedString([]byte(jwtinfo.JwtKey))
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("failed to sign jwt: %s\n", err))
 	}

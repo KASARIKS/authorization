@@ -6,7 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/kasariks/authorization/internal/db/dbuser"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/kasariks/authorization/internal/jwtinfo"
 )
 
 func LoadAddSecretImagePage(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +20,32 @@ func AddSecretImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gottenUser := dbuser.NewDbUser(r.FormValue("Nickname"), r.FormValue("Password"))
+	authCookie := r.Cookies()[0]
+	authTokenString := authCookie.Value
+
+	authToken, err := jwtinfo.ParseToken(authTokenString)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if !authToken.Valid {
+		http.Error(w, errors.New("token isn't valid").Error(), http.StatusBadRequest)
+		return
+	}
+
+	claims, ok := authToken.Claims.(jwt.MapClaims)
+	if !ok {
+		http.Error(w, errors.New("invalid token").Error(), http.StatusBadRequest)
+		return
+	}
+
+	gottenNickname := claims["Nickname"].(string)
+	gottenUser, err := handlersDb.GetUserByNickname(gottenNickname)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	imgBuf, err := getImageFromForm(r)
 	if err != nil {
