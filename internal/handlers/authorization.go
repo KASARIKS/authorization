@@ -34,7 +34,7 @@ func Authorization(w http.ResponseWriter, r *http.Request) {
 	}
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := jwtToken.SignedString(jwtKey)
+	signedToken, err := jwtToken.SignedString([]byte(jwtKey))
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("failed to sign jwt: %s\n", err))
 	}
